@@ -1,13 +1,9 @@
 # Create vm with Terraform
-In this repository, there is a Terraform script that creates the VMs.
+This repository offers a Terraform script for deploying virtual machines in Azure, enabling automated and efficient cloud infrastructure management. Perfect for setting up scalable and reproducible environments.
 
-## Requirenments
-Azure account
-
-## Variables in the .tfvars files
-```
-qa.tfvars
-```
+### Requirenments
+- Azure account
+- Define variables in qa.tfvars
 
 ## Steps
 1. Azure Login
@@ -15,7 +11,6 @@ qa.tfvars
 az login
 ```
 2. Selection of subscription
-
 3. Terraform init and terraform workspace
 ```
 terraform init
