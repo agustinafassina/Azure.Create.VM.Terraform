@@ -3,6 +3,7 @@ This repository offers a Terraform script for deploying virtual machines in Azur
 
 ### Requirenments
 - Azure account
+- Create qa.tfvars file
 - Define variables in qa.tfvars
 
 ## Steps
