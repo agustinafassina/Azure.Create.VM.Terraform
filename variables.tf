@@ -58,3 +58,7 @@ variable "sku_server" {
 variable "version_server" {
   description = "Version for the VM image"
 }
+
+variable "s3_scripts_bucket" {
+  description = "Link s3 scripts bucket"
+}

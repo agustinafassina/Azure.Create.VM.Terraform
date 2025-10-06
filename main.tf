@@ -118,3 +118,20 @@ resource "azurerm_windows_virtual_machine" "vm" {
     storage_account_type = "Standard_LRS"
   }
 }
+
+resource "azurerm_virtual_machine_extension" "add_environment_variable" {
+  name                 = "Install_Scripts"
+  virtual_machine_id   = azurerm_windows_virtual_machine.vm.id
+  publisher            = "Microsoft.Compute"
+  type                 = "CustomScriptExtension"
+  type_handler_version = "1.10"
+
+  settings = <<SETTINGS
+{
+  "fileUris": [
+    "${var.s3_scripts_bucket}"
+  ],
+  "commandToExecute": "powershell -ExecutionPolicy Unrestricted -File 1-create-environment-variables.ps1"
+}
+SETTINGS
+}

@@ -18,3 +18,6 @@ publisher_server    = "Publisher of the Windows Server image"
 offer_server        = "Offer name (e.g., Windows Server)"
 sku_server          = "SKU or edition of the image (e.g., 2022 Datacenter Azure Edition)"
 version_server      = "Version of the image (latest or specific)"
+
+# Additional Variables
+s3_scripts_bucket   = "S3 bucketname with the script"
