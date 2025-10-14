@@ -14,13 +14,10 @@ provider "azurerm" {
 
 locals  {
   resource_name       = "tf-${terraform.workspace}-${var.vm_name}"
-  resource_nic_name   = "tf-${terraform.workspace}-ch-nic-name2"
+  resource_nic_name   = "tf-${terraform.workspace}-nic-name2"
   public_ip_name      = "tf-${terraform.workspace}-public-ip"
   security_group_name = "tf-${terraform.workspace}-nsg"
 }
-
-## 1.Resource group created in azure already.
-## 2. Virtual network and subnet are assumed to be created already.
 
 resource "azurerm_public_ip" "public_ip" {
   name                = local.public_ip_name
@@ -71,7 +68,6 @@ resource "azurerm_subnet_network_security_group_association" "example" {
   network_security_group_id = azurerm_network_security_group.nsg.id
 }
 
-## Create Network Interface Card (NIC)
 resource "azurerm_network_interface" "nic" {
   name                = local.resource_nic_name
   location            = var.location
@@ -92,7 +88,6 @@ resource "azurerm_network_interface" "nic" {
   }
 }
 
-# Create Windows Virtual Machine
 resource "azurerm_windows_virtual_machine" "vm" {
   computer_name       = "${local.resource_name}"
   name                = local.resource_name
