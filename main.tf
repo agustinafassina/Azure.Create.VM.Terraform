@@ -131,7 +131,7 @@ resource "azurerm_virtual_machine_extension" "add_environment_variable" {
   "fileUris": [
     "${var.s3_scripts_bucket}"
   ],
-  "commandToExecute": "powershell -ExecutionPolicy Unrestricted -File 1-create-environment-variables.ps1"
+  "commandToExecute": "powershell -ExecutionPolicy Unrestricted -File 1-create-environment-variables.ps1 -ServerTerraformName ${local.resource_name}"
 }
 SETTINGS
 }
