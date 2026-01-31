@@ -18,11 +18,6 @@ variable "subnet_id" {
   type        = string
 }
 
-variable "nic_name" {
-  description = "NIC name"
-  type        = string
-}
-
 variable "vm_name" {
   description = "VM name"
   type        = string
@@ -31,6 +26,7 @@ variable "vm_name" {
 variable "vm_size" {
   description = "VM size"
   type        = string
+  sensitive   = true
 }
 
 variable "admin_username" {

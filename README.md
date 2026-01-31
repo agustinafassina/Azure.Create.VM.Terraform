@@ -1,6 +1,7 @@
 # Create VM with Terraform / Crear VM con Terraform
 ### English
-This repository offers a Terraform configuration for deploying virtual machines in Azure, enabling automated and efficient cloud infrastructure management. Perfect for setting up scalable and reproducible environments.
+This repository offers a Terraform configuration for deploying virtual machines in Azure, enabling automated and efficient cloud infrastructure management. Perfect for setting up scalable and reproducible environments. The configuration is organized in modules: **network** (Public IP, NSG, NIC) and **compute** (VM, script extension).
+
 
 #### Diagram 📋
 <img src="diagram.png" alt="Diagram" width="400" height="450">
@@ -11,10 +12,10 @@ This repository offers a Terraform configuration for deploying virtual machines 
 - Azure CLI (`az login`)
 
 #### Setup 🛠️
-1. Create `qa.tfvars` from the template and define your variables:
+1. Create `qa.tfvars` from the template and define the variables:
    ```
-   cp qa-template.tfvars qa.tfvars
-   # Edit qa.tfvars with your values
+   cp qa-example.tfvars qa.tfvars
+   # Edit qa.tfvars with the values
    ```
 
 #### Steps 👣
@@ -25,7 +26,7 @@ This repository offers a Terraform configuration for deploying virtual machines 
 
 2. **Select subscription** (if you have multiple)
    ```bash
-   az account set --subscription "your-subscription-id"
+   az account set --subscription "subscription-id"
    ```
 
 3. **Initialize Terraform and select workspace**
@@ -45,14 +46,12 @@ This repository offers a Terraform configuration for deploying virtual machines 
    ```
 
 ### Español
-Este repositorio ofrece una configuracion de Terraform para desplegar maquinas virtuales en Azure, permitiendo la gestion automatizada y eficiente de infraestructura en la nube. Ideal para configurar entornos escalables y reproducibles.
+Este repositorio ofrece una configuración de Terraform para desplegar máquinas virtuales en Azure, permitiendo la gestión automatizada y eficiente de infraestructura en la nube. Ideal para configurar entornos escalables y reproducibles. La configuración está organizada en módulos: **network** (IP pública, NSG, NIC) y **compute** (VM, extensión de scripts).
 
 #### Diagrama 📋
-
 <img src="diagram.png" alt="Diagrama" width="400" height="450">
 
 #### Requisitos 📄
-
 - Cuenta de Azure
 - Terraform >= 1.5
 - Azure CLI (`az login`)

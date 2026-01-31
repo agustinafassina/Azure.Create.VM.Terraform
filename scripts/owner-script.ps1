@@ -4,7 +4,6 @@ param(
 )
 
 $EnvVarScriptUrl = ""
-$TaskSchedulerScriptUrl = ""
 
 $LogFilePath = "C:\owner-scripts-logs.txt"
 
@@ -14,10 +13,6 @@ $ScriptsToDownload = @(
     @{
         Url = $EnvVarScriptUrl
         Path = "C:\scripts\set_environment_variable.ps1"
-    },
-    @{
-        Url = $TaskSchedulerScriptUrl
-        Path = "C:\scripts\configure_task_scheduler.ps1"
     }
 )
 

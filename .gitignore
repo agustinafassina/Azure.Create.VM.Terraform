@@ -50,4 +50,9 @@ Thumbs.db
 qa.tfvars
 terraform.tfstate.d
 .terraform
-
+*.tfstate
+*.tfstate.*
+qa.tfvars
+!*.tfvars.example
+.terraform.lock.hcl 
+.terraform.lock.*

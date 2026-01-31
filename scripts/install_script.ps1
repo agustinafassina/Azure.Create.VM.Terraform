@@ -1,12 +1,12 @@
 $archivo = "test.txt"
 
-# Obtener la fecha actual en formato deseado
+# Get the current date in the desired format
 $fecha = Get-Date -Format "MM/dd/yyyy HH:mm:ss"
 
-# Contenido a escribir
-$contenido = "Run script: $fecha"
+# Content to write
+$contenido = "Run script at $fecha"
 
-# Crear el archivo y escribir el contenido
+# Create the file and write the content
 $contenido | Out-File -FilePath $archivo -Encoding utf8
 
-Write-Output "Script ejecutado a las $fecha" | Out-File -FilePath "C:\status_output.txt"
+Write-Output "Run script at $fecha" | Out-File -FilePath "C:\status_output.txt"
