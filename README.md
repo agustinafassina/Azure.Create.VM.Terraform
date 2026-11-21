@@ -4,7 +4,7 @@ This repository offers a Terraform script for deploying virtual machines in Azur
 ### Diagram
 <img src="diagram.png" alt="Diagram" width="400" height="450">
 
-### Requirenments📝
+### Requirements📝
 - Azure account
 - Create qa.tfvars file
 - Define variables in qa.tfvars
@@ -15,10 +15,15 @@ This repository offers a Terraform script for deploying virtual machines in Azur
 az login
 ```
 2. Selection of subscription
+
+Since azurerm 4.x the subscription must be set explicitly: either `subscription_id` in qa.tfvars or the `ARM_SUBSCRIPTION_ID` environment variable.
+```
+az account set --subscription <subscription-id>
+```
 3. Terraform init and terraform workspace
 ```
 terraform init
-terraform workspace select qa
+terraform workspace select -or-create qa
 ```
 
 4. Terraform plan
