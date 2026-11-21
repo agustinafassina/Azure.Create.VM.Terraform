@@ -10,13 +10,31 @@ terraform {
 
 provider "azurerm" {
   features {}
+
+  # Required since azurerm 4.x. When null, the provider falls back to the
+  # ARM_SUBSCRIPTION_ID environment variable.
+  subscription_id = var.subscription_id
 }
 
-locals  {
+locals {
   resource_name       = "tf-${terraform.workspace}-${var.vm_name}"
   resource_nic_name   = "tf-${terraform.workspace}-nic-name2"
   public_ip_name      = "tf-${terraform.workspace}-public-ip"
   security_group_name = "tf-${terraform.workspace}-nsg"
+
+  # Windows computer names are limited to 15 characters.
+  computer_name = coalesce(
+    var.computer_name,
+    replace(substr(local.resource_name, 0, 15), "/-+$/", "")
+  )
+
+  # Scripts downloaded to the VM by the Custom Script Extension.
+  # owner-script.ps1 is the entry point and runs the others.
+  vm_scripts = [
+    "owner-script.ps1",
+    "create_environment_variable.ps1",
+    "install_script.ps1",
+  ]
 }
 
 resource "azurerm_public_ip" "public_ip" {
@@ -24,7 +42,7 @@ resource "azurerm_public_ip" "public_ip" {
   location            = var.location
   resource_group_name = var.resource_group_name
   allocation_method   = "Static"
-  sku                 = "Basic"
+  sku                 = "Standard"
 }
 
 resource "azurerm_network_security_group" "nsg" {
@@ -32,6 +50,8 @@ resource "azurerm_network_security_group" "nsg" {
   location            = var.location
   resource_group_name = var.resource_group_name
 
+  # RDP is only allowed from var.allowed_source_ip (not from the whole Internet).
+  # SSH (22) was removed: it is not needed on a Windows VM.
   security_rule {
     name                       = "Allow-RDP"
     priority                   = 1000
@@ -39,33 +59,10 @@ resource "azurerm_network_security_group" "nsg" {
     access                     = "Allow"
     protocol                   = "Tcp"
     source_port_range          = "*"
-    destination_port_range     = "3389"   # port RDP
-    source_address_prefix      = "*"
+    destination_port_range     = "3389" # port RDP
+    source_address_prefix      = var.allowed_source_ip
     destination_address_prefix = "*"
   }
-
-  security_rule {
-    name                       = "Allow-SSH"
-    priority                   = 1001
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "22"     # port SSH
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
-  }
-}
-
-data "azurerm_subnet" "existing" {
-  name                 = "default"
-  resource_group_name  = var.resource_group_name
-  virtual_network_name = var.vnet_name
-}
-
-resource "azurerm_subnet_network_security_group_association" "example" {
-  subnet_id                  = data.azurerm_subnet.existing.id
-  network_security_group_id = azurerm_network_security_group.nsg.id
 }
 
 resource "azurerm_network_interface" "nic" {
@@ -88,8 +85,15 @@ resource "azurerm_network_interface" "nic" {
   }
 }
 
+# The NSG is attached to the VM's NIC (not to the shared subnet), so it does not
+# replace the NSG of other resources in the subnet or clash between workspaces.
+resource "azurerm_network_interface_security_group_association" "nic_nsg" {
+  network_interface_id      = azurerm_network_interface.nic.id
+  network_security_group_id = azurerm_network_security_group.nsg.id
+}
+
 resource "azurerm_windows_virtual_machine" "vm" {
-  computer_name       = "${local.resource_name}"
+  computer_name       = local.computer_name
   name                = local.resource_name
   location            = var.location
   resource_group_name = var.resource_group_name
@@ -121,12 +125,10 @@ resource "azurerm_virtual_machine_extension" "add_environment_variable" {
   type                 = "CustomScriptExtension"
   type_handler_version = "1.10"
 
-  settings = <<SETTINGS
-{
-  "fileUris": [
-    "${var.s3_scripts_bucket}"
-  ],
-  "commandToExecute": "powershell -ExecutionPolicy Unrestricted -File owner-script.ps1 -ServerTerraformName ${local.resource_name}"
-}
-SETTINGS
+  settings = jsonencode({
+    fileUris = [
+      for script in local.vm_scripts : "${trimsuffix(var.scripts_base_url, "/")}/${script}"
+    ]
+    commandToExecute = "powershell -ExecutionPolicy Unrestricted -File owner-script.ps1 -TerraformServerName ${local.resource_name}"
+  })
 }
